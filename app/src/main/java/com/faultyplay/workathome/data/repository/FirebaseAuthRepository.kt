@@ -1,6 +1,7 @@
 package com.faultyplay.workathome.data.repository
 
 import com.faultyplay.workathome.data.datastore.UserPreferencesDataSource
+import com.faultyplay.workathome.di.AppModule
 import com.faultyplay.workathome.domain.model.Member
 import com.faultyplay.workathome.domain.model.UserAccount
 import com.faultyplay.workathome.domain.repository.AuthRepository
@@ -20,7 +21,7 @@ import javax.inject.Singleton
 class FirebaseAuthRepository @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val userPreferencesDataSource: UserPreferencesDataSource,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    @AppModule.IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : AuthRepository {
 
     private val mutableUserFlow = MutableStateFlow(firebaseAuth.currentUser?.toDomain())

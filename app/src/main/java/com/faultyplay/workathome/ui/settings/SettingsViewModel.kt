@@ -10,6 +10,7 @@ import com.faultyplay.workathome.domain.repository.AuthRepository
 import com.faultyplay.workathome.domain.repository.HouseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val preferences: UserPreferencesDataSource,
@@ -45,7 +47,13 @@ class SettingsViewModel @Inject constructor(
         housesFlow,
         isSigningOut,
         errorMessage
-    ) { notifications, theme, user, houses, signingOut, error ->
+    ) { values ->
+        val notifications = values[0] as Boolean
+        val theme = values[1] as ThemePreference
+        val user = values[2] as UserAccount?
+        val houses = values[3] as List<House>
+        val signingOut = values[4] as Boolean
+        val error = values[5] as String?
         SettingsUiState(
             notificationsEnabled = notifications,
             themePreference = theme,

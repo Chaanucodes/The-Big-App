@@ -2,9 +2,10 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.gms.servies) // Apply the plugin using the alias
 }
 
 android {
@@ -30,13 +31,22 @@ android {
             )
         }
     }
+
+    hilt {
+        enableAggregatingTask = false
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs = freeCompilerArgs + listOf("-opt-in=kotlin.RequiresOptIn")
+        jvmTarget = "17" // Deprecated, but required until AGP supports compilerOptions DSL
+        freeCompilerArgs = freeCompilerArgs + listOf("-opt-in=kotlin.RequiresOptIn") // Deprecated, but required for now
+        allWarningsAsErrors = false // Deprecated, but required for now
+        // You can also add more opt-in flags if you use other experimental APIs
+        // freeCompilerArgs += listOf("-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
+        // Note: Deprecation warnings for these properties are expected and safe to ignore until AGP supports the new DSL
     }
     buildFeatures {
         compose = true

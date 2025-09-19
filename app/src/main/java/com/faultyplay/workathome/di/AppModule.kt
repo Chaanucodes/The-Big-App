@@ -18,7 +18,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -35,11 +38,15 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
+    }
 
     @Provides
     @Singleton
-    fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
+    fun provideFirestore(): FirebaseFirestore{
+        return FirebaseFirestore.getInstance()
+    }
 
     @Provides
     @Singleton
@@ -56,7 +63,7 @@ object AppModule {
         "work_at_home.db"
     )
         .addTypeConverter(converters)
-        .fallbackToDestructiveMigration()
+        .fallbackToDestructiveMigration(false)
         .build()
 
     @Provides
@@ -76,4 +83,38 @@ object AppModule {
     ): DataStore<Preferences> = PreferenceDataStoreFactory.create(
         produceFile = { context.preferencesDataStoreFile("user_preferences.preferences_pb") }
     )
+
+
+// Optional: Define custom qualifiers if you need to distinguish
+// between different dispatchers of the same type (e.g., multiple IO dispatchers)
+// or for more semantic meaning.
+
+    @Retention(AnnotationRetention.BINARY)
+    @Qualifier
+    annotation class IoDispatcher
+
+    @Retention(AnnotationRetention.BINARY)
+    @Qualifier
+    annotation class MainDispatcher
+
+    @Retention(AnnotationRetention.BINARY)
+    @Qualifier
+    annotation class DefaultDispatcher
+
+    @Module
+    @InstallIn(SingletonComponent::class) // Or the appropriate component for your scope
+    object DispatchersModule {
+
+        @Provides
+        @DefaultDispatcher // Or use @Named("DefaultDispatcher") or no qualifier if it's the primary one
+        fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+
+        @Provides
+        @IoDispatcher // Or use @Named("IoDispatcher")
+        fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+        @Provides
+        @MainDispatcher // Or use @Named("MainDispatcher")
+        fun provideMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
+    }
 }

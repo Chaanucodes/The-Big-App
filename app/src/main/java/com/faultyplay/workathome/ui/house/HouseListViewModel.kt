@@ -9,6 +9,7 @@ import com.faultyplay.workathome.domain.repository.AuthRepository
 import com.faultyplay.workathome.domain.repository.HouseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +32,7 @@ data class HouseListUiState(
     val currentMember: Member? = null
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HouseListViewModel @Inject constructor(
     private val houseRepository: HouseRepository,
@@ -74,7 +76,15 @@ class HouseListViewModel @Inject constructor(
         loading,
         errorMessage,
         currentMemberFlow
-    ) { houses, selectedHouse, invite, name, allowed, isLoading, error, member ->
+    ) { values ->
+        val houses = values[0] as List<House>
+        val selectedHouse = values[1] as String?
+        val invite = values[2] as String
+        val name = values[3] as String
+        val allowed = values[4] as String
+        val isLoading = values[5] as Boolean
+        val error = values[6] as String?
+        val member = values[7] as Member?
         HouseListUiState(
             houses = houses,
             activeHouseId = selectedHouse,

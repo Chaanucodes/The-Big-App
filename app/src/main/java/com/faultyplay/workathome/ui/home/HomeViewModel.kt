@@ -5,11 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.faultyplay.workathome.data.datastore.UserPreferencesDataSource
 import com.faultyplay.workathome.domain.model.House
 import com.faultyplay.workathome.domain.model.Task
+import com.faultyplay.workathome.domain.model.UserAccount
 import com.faultyplay.workathome.domain.repository.AuthRepository
 import com.faultyplay.workathome.domain.repository.HouseRepository
 import com.faultyplay.workathome.domain.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +24,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val houseRepository: HouseRepository,
@@ -65,7 +68,13 @@ class HomeViewModel @Inject constructor(
         isLoading,
         errorMessage,
         currentUserState
-    ) { house, tasks, query, loading, error, currentUser ->
+    ) { values ->
+        val house = values[0] as House?
+        val tasks = values[1] as List<Task>
+        val query = values[2] as String
+        val loading = values[3] as Boolean
+        val error = values[4] as String?
+        val currentUser = values[5] as UserAccount?
         val activeTasks = tasks.filter { it.isActive }.filter { task ->
             query.isBlank() || task.taskName.contains(query, ignoreCase = true) ||
                 (task.description?.contains(query, ignoreCase = true) ?: false)

@@ -5,6 +5,7 @@ import com.faultyplay.workathome.data.local.dao.TaskSuggestionDao
 import com.faultyplay.workathome.data.local.entity.TaskEntity
 import com.faultyplay.workathome.data.local.entity.TaskSuggestionEntity
 import com.faultyplay.workathome.data.remote.FirebaseHouseService
+import com.faultyplay.workathome.di.AppModule
 import com.faultyplay.workathome.domain.model.ProgressType
 import com.faultyplay.workathome.domain.model.Task
 import com.faultyplay.workathome.domain.model.TaskSession
@@ -24,7 +25,7 @@ class TaskRepositoryImpl @Inject constructor(
     private val taskDao: TaskDao,
     private val taskSuggestionDao: TaskSuggestionDao,
     private val remote: FirebaseHouseService,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    @AppModule.IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : TaskRepository {
 
     override fun observeTasks(houseId: String): Flow<List<Task>> =

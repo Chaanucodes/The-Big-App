@@ -5,6 +5,7 @@ import com.faultyplay.workathome.data.local.dao.TaskDao
 import com.faultyplay.workathome.data.local.entity.HouseEntity
 import com.faultyplay.workathome.data.local.entity.TaskEntity
 import com.faultyplay.workathome.data.remote.FirebaseHouseService
+import com.faultyplay.workathome.di.AppModule
 import com.faultyplay.workathome.domain.model.House
 import com.faultyplay.workathome.domain.model.Member
 import com.faultyplay.workathome.domain.repository.HouseRepository
@@ -23,7 +24,7 @@ class HouseRepositoryImpl @Inject constructor(
     private val houseDao: HouseDao,
     private val taskDao: TaskDao,
     private val remote: FirebaseHouseService,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    @AppModule.IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : HouseRepository {
 
     override fun observeHouses(userId: String): Flow<List<House>> = combine(
