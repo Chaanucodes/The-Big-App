@@ -12,7 +12,6 @@ import com.faultyplay.workathome.domain.model.TaskSession
 import com.faultyplay.workathome.domain.model.TaskSuggestion
 import com.faultyplay.workathome.domain.repository.TaskRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -25,7 +24,7 @@ class TaskRepositoryImpl @Inject constructor(
     private val taskDao: TaskDao,
     private val taskSuggestionDao: TaskSuggestionDao,
     private val remote: FirebaseHouseService,
-    @AppModule.IoDispatcher private val dispatcher: CoroutineDispatcher
+    @param:AppModule.IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : TaskRepository {
 
     override fun observeTasks(houseId: String): Flow<List<Task>> =
@@ -75,7 +74,8 @@ class TaskRepositoryImpl @Inject constructor(
         withContext(dispatcher) {
             val finalTask = normalizeTask(task)
             val current = taskDao.getTasks(task.houseId).firstOrNull { it.id == finalTask.id }
-            val shouldOverride = current == null || overrideConflicts || finalTask.lastModifiedAt >= (current?.lastModifiedAt ?: 0L)
+            val shouldOverride = current == null || overrideConflicts || finalTask.lastModifiedAt >= (current?.lastModifiedAt
+                ?: 0L)
             val entity = TaskEntity.fromDomain(finalTask)
             taskDao.upsertTask(entity)
             if (shouldOverride) {
@@ -215,7 +215,7 @@ class TaskRepositoryImpl @Inject constructor(
         val recurringDeadline = if (task.isRecurring) {
             task.recurringDeadlineAt ?: task.deadlineAt?.let { deadline ->
                 val duration = deadline - task.createdAt
-                task.deadlineAt?.plus(duration)
+                task.deadlineAt.plus(duration)
             }
         } else {
             null

@@ -10,7 +10,6 @@ import com.faultyplay.workathome.domain.model.House
 import com.faultyplay.workathome.domain.model.Member
 import com.faultyplay.workathome.domain.repository.HouseRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -24,7 +23,7 @@ class HouseRepositoryImpl @Inject constructor(
     private val houseDao: HouseDao,
     private val taskDao: TaskDao,
     private val remote: FirebaseHouseService,
-    @AppModule.IoDispatcher private val dispatcher: CoroutineDispatcher
+    @param:AppModule.IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : HouseRepository {
 
     override fun observeHouses(userId: String): Flow<List<House>> = combine(

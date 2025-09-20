@@ -8,7 +8,6 @@ import com.faultyplay.workathome.domain.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +20,7 @@ import javax.inject.Singleton
 class FirebaseAuthRepository @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val userPreferencesDataSource: UserPreferencesDataSource,
-    @AppModule.IoDispatcher private val dispatcher: CoroutineDispatcher
+    @param:AppModule.IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : AuthRepository {
 
     private val mutableUserFlow = MutableStateFlow(firebaseAuth.currentUser?.toDomain())
